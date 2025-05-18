@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KIIT SGPA/CGPA Calculator</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #2c3e50;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            margin-bottom: 15px;
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            color: var(--secondary-color);
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        .result-card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .result-card h3 {
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .result-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--secondary-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+
+        .course-row {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .course-row input, .course-row select {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-add {
+            margin-top: 10px;
+            background-color: #2ecc71;
+        }
+
+        .btn-add:hover {
+            background-color: #27ae60;
+        }
+
+        .semester-card {
+            background-color: var(--card-color);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .semester-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .semester-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .course-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>KIIT <span>SGPA/CGPA Calculator</span></h1>
+            </div>
+            <p>Calculate your Semester Grade Point Average (SGPA) and Cumulative Grade Point Average (CGPA) easily</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="sgpa">SGPA Calculator</button>
+            <button class="tab-btn" data-tab="cgpa">CGPA Calculator</button>
+            <button class="tab-btn" data-tab="about">About</button>
+        </div>
+
+        <div id="sgpa" class="tab-content active">
+            <h2>SGPA Calculator</h2>
+            <p>Enter your course details to calculate your SGPA</p>
+            
+            <div id="courses-container">
+                <div class="course-row">
+                    <input type="text" placeholder="Course Name" class="course-name">
+                    <input type="number" placeholder="Credit Hours" min="1" max="10" class="course-credit">
+                    <select class="course-grade">
+                        <option value="" disabled selected>Select Grade</option>
+                        <option value="10">O (Outstanding) - 10</option>
+                        <option value="9">E (Excellent) - 9</option>
+                        <option value="8">A (Very Good) - 8</option>
+                        <option value="7">B (Good) - 7</option>
+                        <option value="6">C (Above Average) - 6</option>
+                        <option value="5">D (Average) - 5</option>
+                        <option value="4">F (Fail) - 4</option>
+                    </select>
+                    <button class="btn btn-danger btn-small remove-course">✕</button>
+                </div>
+            </div>
+            
+            <button id="add-course" class="btn btn-add">Add Course</button>
+            <button id="calculate-sgpa" class="btn" style="margin-top: 20px;">Calculate SGPA</button>
+            
+            <div id="sgpa-result" class="result-card" style="display: none;">
+                <h3>Your SGPA</h3>
+                <div class="result-value" id="sgpa-value">0.00</div>
+                <p>Total Credits: <span id="total-credits">0</span></p>
+            </div>
+        </div>
+
+        <div id="cgpa" class="tab-content">
+            <h2>CGPA Calculator</h2>
+            <p>Enter your SGPA for each semester to calculate your CGPA</p>
+            
+            <div id="semesters-container">
+                <div class="semester-card">
+                    <div class="semester-header">
+                        <h3>Semester 1</h3>
+                        <button class="btn btn-danger btn-small remove-semester">✕</button>
+                    </div>
+                    <div class="form-group">
+                        <label>SGPA</label>
+                        <input type="number" class="form-control semester-sgpa" min="0" max="10" step="0.01" placeholder="Enter SGPA (0-10)">
+                    </div>
+                    <div class="form-group">
+                        <label>Credits</label>
+                        <input type="number" class="form-control semester-credits" min="1" placeholder="Enter total credits">
+                    </div>
+                </div>
+            </div>
+            
+            <button id="add-semester" class="btn btn-add">Add Semester</button>
+            <button id="calculate-cgpa" class="btn" style="margin-top: 20px;">Calculate CGPA</button>
+            
+            <div id="cgpa-result" class="result-card" style="display: none;">
+                <h3>Your CGPA</h3>
+                <div class="result-value" id="cgpa-value">0.00</div>
+                <p>Total Credits: <span id="cgpa-total-credits">0</span></p>
+            </div>
+        </div>
+
+        <div id="about" class="tab-content">
+            <h2>About KIIT SGPA/CGPA Calculator</h2>
+            <p>This calculator is designed for KIIT University students to easily calculate their SGPA and CGPA.</p>
+            
+            <h3>How SGPA is calculated</h3>
+            <p>SGPA (Semester Grade Point Average) is calculated using the formula:</p>
+            <pre>SGPA = Σ(Grade Points × Credit Hours) / Σ(Credit Hours)</pre>
+            
+            <h3>How CGPA is calculated</h3>
+            <p>CGPA (Cumulative Grade Point Average) is calculated using the formula:</p>
+            <pre>CGPA = Σ(SGPA × Semester Credits) / Σ(All Semester Credits)</pre>
+            
+            <h3>Grade Points</h3>
+            <table>
+                <tr>
+                    <th>Grade</th>
+                    <th>Description</th>
+                    <th>Grade Points</th>
+                </tr>
+                <tr>
+                    <td>O</td>
+                    <td>Outstanding</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>E</td>
+                    <td>Excellent</td>
+                    <td>9</td>
+                </tr>
+                <tr>
+                    <td>A</td>
+                    <td>Very Good</td>
+                    <td>8</td>
+                </tr>
+                <tr>
+                    <td>B</td>
+                    <td>Good</td>
+                    <td>7</td>
+                </tr>
+                <tr>
+                    <td>C</td>
+                    <td>Above Average</td>
+                    <td>6</td>
+                </tr>
+                <tr>
+                    <td>D</td>
+                    <td>Average</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>F</td>
+                    <td>Fail</td>
+                    <td>4</td>
+                </tr>
+            </table>
+        </div>
+        
+        <footer>
+            <p>© 2025 KIIT SGPA/CGPA Calculator | Made with ❤️ for KIIT Students</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Add active class to current tab
+                button.classList.add('active');
+                document.getElementById(button.dataset.tab).classList.add('active');
+            });
+        });
+
+        // SGPA Calculator
+        document.getElementById('add-course').addEventListener('click', () => {
+            const courseRow = document.createElement('div');
+            courseRow.className = 'course-row';
+            courseRow.innerHTML = `
+                <input type="text" placeholder="Course Name" class="course-name">
+                <input type="number" placeholder="Credit Hours" min="1" max="10" class="course-credit">
+                <select class="course-grade">
+                    <option value="" disabled selected>Select Grade</option>
+                    <option value="10">O (Outstanding) - 10</option>
+                    <option value="9">E (Excellent) - 9</option>
+                    <option value="8">A (Very Good) - 8</option>
+                    <option value="7">B (Good) - 7</option>
+                    <option value="6">C (Above Average) - 6</option>
+                    <option value="5">D (Average) - 5</option>
+                    <option value="4">F (Fail) - 4</option>
+                </select>
+                <button class="btn btn-danger btn-small remove-course">✕</button>
+            `;
+            document.getElementById('courses-container').appendChild(courseRow);
+            
+            // Add event listener to the new remove button
+            courseRow.querySelector('.remove-course').addEventListener('click', function() {
+                this.parentElement.remove();
+            });
+        });
+
+        // Add event listener to the initial remove course button
+        document.querySelector('.remove-course').addEventListener('click', function() {
+            if (document.querySelectorAll('.course-row').length > 1) {
+                this.parentElement.remove();
+            } else {
+                alert('You need at least one course!');
+            }
+        });
+
+        document.getElementById('calculate-sgpa').addEventListener('click', () => {
+            const courseRows = document.querySelectorAll('.course-row');
+            let totalGradePoints = 0;
+            let totalCredits = 0;
+            let isValid = true;
+            
+            courseRows.forEach(row => {
+                const credits = parseFloat(row.querySelector('.course-credit').value);
+                const grade = parseFloat(row.querySelector('.course-grade').value);
+                
+                if (isNaN(credits) || isNaN(grade)) {
+                    isValid = false;
+                    return;
+                }
+                
+                totalGradePoints += credits * grade;
+                totalCredits += credits;
+            });
+            
+            if (!isValid) {
+                alert('Please fill in all fields correctly!');
+                return;
+            }
+            
+            const sgpa = totalGradePoints / totalCredits;
+            
+            document.getElementById('sgpa-value').textContent = sgpa.toFixed(2);
+            document.getElementById('total-credits').textContent = totalCredits;
+            document.getElementById('sgpa-result').style.display = 'block';
+        });
+
+        // CGPA Calculator
+        document.getElementById('add-semester').addEventListener('click', () => {
+            const semestersContainer = document.getElementById('semesters-container');
+            const semesterCount = semestersContainer.querySelectorAll('.semester-card').length + 1;
+            
+            const semesterCard = document.createElement('div');
+            semesterCard.className = 'semester-card';
+            semesterCard.innerHTML = `
+                <div class="semester-header">
+                    <h3>Semester ${semesterCount}</h3>
+                    <button class="btn btn-danger btn-small remove-semester">✕</button>
+                </div>
+                <div class="form-group">
+                    <label>SGPA</label>
+                    <input type="number" class="form-control semester-sgpa" min="0" max="10" step="0.01" placeholder="Enter SGPA (0-10)">
+                </div>
+                <div class="form-group">
+                    <label>Credits</label>
+                    <input type="number" class="form-control semester-credits" min="1" placeholder="Enter total credits">
+                </div>
+            `;
+            semestersContainer.appendChild(semesterCard);
+            
+            // Add event listener to the new remove button
+            semesterCard.querySelector('.remove-semester').addEventListener('click', function() {
+                this.closest('.semester-card').remove();
+                // Update semester numbers
+                updateSemesterNumbers();
+            });
+        });
+
+        // Add event listener to the initial remove semester button
+        document.querySelector('.remove-semester').addEventListener('click', function() {
+            if (document.querySelectorAll('.semester-card').length > 1) {
+                this.closest('.semester-card').remove();
+                updateSemesterNumbers();
+            } else {
+                alert('You need at least one semester!');
+            }
+        });
+
+        function updateSemesterNumbers() {
+            const semesterCards = document.querySelectorAll('.semester-card');
+            semesterCards.forEach((card, index) => {
+                card.querySelector('h3').textContent = `Semester ${index + 1}`;
+            });
+        }
+
+        document.getElementById('calculate-cgpa').addEventListener('click', () => {
+            const semesterCards = document.querySelectorAll('.semester-card');
+            let totalWeightedSGPA = 0;
+            let totalCredits = 0;
+            let isValid = true;
+            
+            semesterCards.forEach(card => {
+                const sgpa = parseFloat(card.querySelector('.semester-sgpa').value);
+                const credits = parseFloat(card.querySelector('.semester-credits').value);
+                
+                if (isNaN(sgpa) || isNaN(credits)) {
+                    isValid = false;
+                    return;
+                }
+                
+                totalWeightedSGPA += sgpa * credits;
+                totalCredits += credits;
+            });
+            
+            if (!isValid) {
+                alert('Please fill in all fields correctly!');
+                return;
+            }
+            
+            const cgpa = totalWeightedSGPA / totalCredits;
+            
+            document.getElementById('cgpa-value').textContent = cgpa.toFixed(2);
+            document.getElementById('cgpa-total-credits').textContent = totalCredits;
+            document.getElementById('cgpa-result').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
